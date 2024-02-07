@@ -1,13 +1,27 @@
-<?php require_once 'includes/autoLoder.php'; require_once 'includes/bootstrap.min.css';
+<?php require_once 'includes/autoLoder.php'; require_once 'includes/common.php';
 //connect my databese is this file
 
-//Undefined method 'connect'.
-if(isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $db = new Dbh();
-    $pdo = $db->connect();
-    $query = $pdo->query('SELECT * FROM test_tbl WHERE id='.$_GET['id']);
-    $rs = $query->fetch();
+class Fetch extends Dbh
+{
+    public function fetch(){
+        $id = 0;
+        if(isset($_GET['id'])) {
+            $id = $_GET['id'];
+        }
+        $db = new Dbh();
+        $pdo = $db->connect();
+        $query = $pdo->query('SELECT * FROM test_tbl WHERE id='.$id);
+        $rs = $query->fetch();
+        echo
+        '<form action="actionUpdate.php?id='.$id.'" method="post">
+            <label for="" class="form-label">Name:</label><br>
+            <input class="form-control" type="text" name="name" value="'.$rs['name'].'"><br>
+            <label for="" class="form-label">Email:</label><br>
+            <input class="form-control" type="email" name="email" value="'.$rs['email'].'"><br><br>
+            <button class="btn btn-primary" type="submit">Update</button>
+        </form>';
+    }
+    
 }
 
 ?>
@@ -20,18 +34,12 @@ if(isset($_GET['id'])) {
 </head>
 <?php echo $bootstrapCSS; ?>
 <body>
-    <?php
-        
-        // $pdo = $db->connect();
-        // $query = $db->content()->query("SELECT * FROM test_tbl");
-    ?>
-    <form action="actionUpdate.php?id=<?php echo $id; ?>" method="post">
-        <label for="">Name:</label><br>
-        <input type="text" name="name" value="<?php echo $rs['name']; ?>"><br>
-        <label for="">Email:</label><br>
-        <input type="email" name="email" value="<?php echo $rs['email']; ?>"><br><br>
-        <button type="submit">Update</button>
-    </form>
-    <?php echo $bootstrapJS; ?>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+            <?php (new Fetch())->fetch();?>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
